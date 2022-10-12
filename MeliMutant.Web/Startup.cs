@@ -38,7 +38,8 @@ namespace MeliMutant.Web
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "MeliMutant.Web", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "MeliMutant.Api", Version = "v1" });
+                
             });
             services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
@@ -47,6 +48,7 @@ namespace MeliMutant.Web
                     options.UseSqlServer(Configuration.GetConnectionString("Default"),
                     x => x.MigrationsAssembly("MeliMutant.Infrastructure"))
             );
+
             services.AddScoped(typeof(IMutantService), typeof(MutantService));
             services.AddScoped(typeof(IMutantStats), typeof(StatsService));
             services.AddAutoMapper(typeof(Startup));
@@ -59,7 +61,13 @@ namespace MeliMutant.Web
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MeliMutant.Web v1"));
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "MeliMutant.Api v1");
+                    c.RoutePrefix = string.Empty;
+                    c.DocumentTitle = "MeliMutant API";
+                    }
+                );
             }
 
             app.UseHttpsRedirection();
